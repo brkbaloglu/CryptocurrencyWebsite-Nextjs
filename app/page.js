@@ -1,95 +1,46 @@
 import Image from "next/image";
-import styles from "./page.module.css";
+import cryptoHomePage from "../assets/crypto.jpeg"
+import Link from "next/link";
 
-export default function Home() {
+const API_URL = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&page=1&sparkline=false"
+
+  const getCryptocurrencies = async() => {
+    const response = fetch(API_URL)
+    
+    return (await response).json()
+  }
+
+async function Home() {
+
+  const cryptosPromise = getCryptocurrencies()
+  const cryptocurrencies = await Promise.all([cryptosPromise])
+  console.log(cryptocurrencies[0]);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+   <div>
+    <div className="relative">
+      <Image width={1920} height={1080} src={cryptoHomePage}></Image>
+      <div className="absolute top-80 left-10">
+        <h4 className="text-2xl font-bold">Buy & Sell Crypto 24/7 using your account</h4>
+        <h2 className="text-4xl font-bold">Invest in Cryptocurrency</h2>
+        <h6 className="text-lg font-bold">Buy, Sell, and store hundreds of cryptocurrencies</h6>
+        <div className="flex items-center justify-center mt-5">
+          <Link className="bg-white text-black font-bold px-4 py-2 rounded-xl text-xl" href="/cryptocurrency">Learn More</Link>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
+    <div className="flex items-center justify-center h-[200px]">
+      {cryptocurrencies[0].slice(0,5).map((cryptocurrency, index) => (
+        <div key={index} className="mx-5 border-2 p-5 rounded-2xl">
+          <h3 className="font-bold text-2xl border-b-2 mb-2">{cryptocurrency.name}</h3>
+          <h3>Current Price: {cryptocurrency.current_price} $</h3>
+          <h3>Last Update: {cryptocurrency.last_updated.slice(0, 10)}</h3>
+        </div>
+      ))}
+    </div>
+   </div>
   );
 }
+
+
+export default Home
